@@ -1,7 +1,21 @@
 import React, { Component } from 'react'
 import { Text, View, TouchableOpacity,StyleSheet,TextInput } from 'react-native'
+import '../api/getTemp'
+import getTemp from '../api/getTemp';
 
 export default class Main extends Component {
+    constructor(props){
+        super(props);
+        this.state = {cityName: ''}
+    }
+
+    getTempCityName(){
+        const {cityName} = this.state
+        getTemp(cityName)
+        .then(temp => console.log(temp))
+        .catch(err => console.log(err))
+    }
+
     render() {
         const {container,styleText,textInput,button,txtButton} = styles
         return (
@@ -9,8 +23,10 @@ export default class Main extends Component {
                 <Text style={styleText}>Ha noi nhiet do hien tai la 30oC</Text>
                 <TextInput
                     style={textInput}
+                    value = {this.state.cityName}
+                    onChangeText = {text=> this.setState({cityName: text})}
                 />
-                <TouchableOpacity style={button}>
+                <TouchableOpacity style={button} onPress = {this.getTempCityName.bind(this)}>
                     <Text style={txtButton}>Lay nhiet do</Text>
                 </TouchableOpacity>
             </View>
