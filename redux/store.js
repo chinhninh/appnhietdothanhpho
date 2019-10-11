@@ -15,11 +15,9 @@ const reducer = (state = defaultState, action) => {
             return {isLoading: false,cityName: action.cityName,temp: action.temp, error: false}
         case 'FETCH_ERROR':
             return {isLoading: false,cityName: null,temp: null, error: true}
-    
         default:
-            break;
+            return state;
     }
-    return state
 }
 
 const store = createStore(reducer)

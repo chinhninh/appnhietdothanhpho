@@ -1,26 +1,36 @@
 import React, { Component } from 'react'
 import { Text, View, TouchableOpacity,StyleSheet,TextInput } from 'react-native'
-import '../api/getTemp'
 import getTemp from '../api/getTemp';
+import {fetchSuccess,startFetch,fetchError} from '../redux/actionCreator'
+import {connect} from 'react-redux'
 
-export default class Main extends Component {
+class Main extends Component {
     constructor(props){
         super(props);
         this.state = {cityName: ''}
     }
 
+    getWeatherMessage() {
+        const {isLoading,temp,cityName,error} = this.props
+        if(isLoading) return '...Loading';
+        if(error) return 'vui long thu lai';
+        if(!cityName) return 'nhap ten thanh pho cua ban';
+        return `${cityName} nhiet do hien tai la ${temp}oC`;
+    }
+
     getTempCityName(){
-        const {cityName} = this.state
+        const {cityName} = this.state;
+        this.props.startFetch();
         getTemp(cityName)
-        .then(temp => console.log(temp))
-        .catch(err => console.log(err))
+        .then(temp => this.props.fetchSuccess(cityName,temp))
+        .catch(() => this.props.fetchError())
     }
 
     render() {
         const {container,styleText,textInput,button,txtButton} = styles
         return (
             <View style = {container}>
-                <Text style={styleText}>Ha noi nhiet do hien tai la 30oC</Text>
+                <Text style={styleText}>{this.getWeatherMessage()}</Text>
                 <TextInput
                     style={textInput}
                     value = {this.state.cityName}
@@ -33,6 +43,17 @@ export default class Main extends Component {
         )
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        isLoading: state.isLoading,
+        temp: state.temp,
+        error: state.error,
+        cityName: state.cityName
+    }
+}
+
+export default connect(mapStateToProps,{fetchSuccess,startFetch,fetchError})(Main)
 
 const styles = StyleSheet.create({
     container: {
