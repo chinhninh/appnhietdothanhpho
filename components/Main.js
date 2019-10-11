@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, TouchableOpacity,StyleSheet,TextInput } from 'react-native'
 import getTemp from '../api/getTemp';
-import {fetchSuccess,startFetch,fetchError} from '../redux/actionCreator'
+import * as actionCreator from '../redux/actionCreator'
 import {connect} from 'react-redux'
 
 class Main extends Component {
@@ -20,10 +20,11 @@ class Main extends Component {
 
     getTempCityName(){
         const {cityName} = this.state;
-        this.props.startFetch();
-        getTemp(cityName)
-        .then(temp => this.props.fetchSuccess(cityName,temp))
-        .catch(() => this.props.fetchError())
+        // this.props.startFetch();
+        // getTemp(cityName)
+        // .then(temp => this.props.fetchSuccess(cityName,temp))
+        // .catch(() => this.props.fetchError())
+        this.props.fetchDataThunk(cityName)
     }
 
     render() {
@@ -53,7 +54,7 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps,{fetchSuccess,startFetch,fetchError})(Main)
+export default connect(mapStateToProps,actionCreator)(Main)
 
 const styles = StyleSheet.create({
     container: {
